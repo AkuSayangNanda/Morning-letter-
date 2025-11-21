@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Morning Letter</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Dancing+Script:wght@500&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#fff7f6;--card:#fff;--muted:#6d5e57;--accent:#dca78a;--sakura:#ffdfe6}
+    *{box-sizing:border-box}html,body{height:100%;margin:0;font-family:Poppins,system-ui,Arial;background:linear-gradient(180deg,#fffaf8,#f6eae8);color:#2b2b2b}
+    .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:28px}
+    .card{width:92%;max-width:720px;background:var(--card);border-radius:18px;padding:28px;box-shadow:0 30px 60px rgba(18,12,8,0.06);text-align:center;position:relative;overflow:hidden}
+    h1{font-family:'Dancing Script',cursive;color:var(--accent);margin:0;font-size:28px}
+    p.lead{color:var(--muted);margin:8px 0 18px}
+
+    /* sakura logo */
+    .sakura{width:140px;height:140px;margin:18px auto}
+
+    .open-btn{appearance:none;border:0;background:linear-gradient(90deg,var(--accent),#e1b88f);color:#fff;padding:12px 18px;border-radius:12px;font-weight:700;cursor:pointer;box-shadow:0 10px 28px rgba(185,138,90,0.12)}
+    .hint{font-size:13px;color:var(--muted);margin-top:10px}
+
+    /* overlay letter */
+    .overlay{position:fixed;inset:0;background:linear-gradient(180deg,rgba(6,4,3,0.3),rgba(6,4,3,0.45));display:flex;align-items:center;justify-content:center;z-index:90;opacity:0;pointer-events:none;transition:opacity .4s}
+    .overlay.show{opacity:1;pointer-events:auto}
+
+    /* UPDATED: modal letter is scrollable on mobile and limited height */
+    .letter{
+      width:93%;
+      max-width:680px;
+      background:linear-gradient(180deg,#fffdfb,#fff8f6);
+      border-radius:14px;
+      padding:22px;
+      box-shadow:0 30px 90px rgba(10,8,6,0.3);
+      transform:translateY(12px);
+      opacity:0;
+      transition:all .45s;
+      max-height:86vh;               /* fits inside viewport */
+      overflow:auto;                 /* enable scroll inside modal */
+      -webkit-overflow-scrolling:touch; /* smooth scroll on iOS */
+    }
+    .overlay.show .letter{ transform:translateY(0); opacity:1; }
+
+    .letter h2{font-family:'Dancing Script',cursive;color:var(--accent);margin:0;font-size:26px}
+    .letter .body{margin-top:12px;color:#3b2f2a;line-height:1.75;font-size:16px;text-align:left}
+    .letter .actions{margin-top:18px;display:flex;gap:10px;justify-content:center}
+    .small{background:transparent;border:0;color:var(--accent);font-weight:700;cursor:pointer}
+
+    /* floating sakura petals (very light) */
+    .petal{position:fixed;pointer-events:none;z-index:85;opacity:0.95;font-size:22px}
+    @keyframes fall{0%{transform:translateY(-20vh) rotate(0deg);opacity:0}10%{opacity:1}100%{transform:translateY(110vh) rotate(360deg);opacity:0.95}}
+
+    /* responsive */
+    @media(max-width:560px){.sakura{width:110px;height:110px}.letter{padding:16px}}
+
+    /* photo styles - updated for mobile so image won't be cut off */
+    .photo-box {
+      margin: 24px auto 10px auto;
+      text-align: center;
+    }
+
+    .photo-box img {
+      width: 88%;
+      max-width: 360px;
+      height: auto;
+      border-radius: 14px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+      object-fit: cover;
+      display:block;
+      margin-left:auto;
+      margin-right:auto;
+      animation: fadeIn 1s ease;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(8px);}
+      to   {opacity: 1; transform: translateY(0);}
+    }
+
+  </style>
+</head>
+<body>
+  <!-- audio: use uploaded file path -->
+  <audio id="bgm" loop preload="auto" src="/mnt/data/nadhif basalamah - bergema sampai selamanya ( slowed reverb).mp3"></audio>
+
+  <div class="wrap">
+    <div class="card" role="main" aria-labelledby="title">
+      <h1 id="title">Selamat pagi, sayang</h1>
+      <p class="lead">a little Morning letter from me</p>
+
+      <!-- sakura logo (SVG) -->
+      <div class="sakura" id="sakuraLogo" aria-hidden="true">
+        <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+          <defs>
+            <linearGradient id="gA" x1="0" x2="1"><stop offset="0" stop-color="#fff0f3"/><stop offset="1" stop-color="#ffdfe8"/></linearGradient>
+            <linearGradient id="gB" x1="0" x2="1"><stop offset="0" stop-color="#ffdfe8"/><stop offset="1" stop-color="#ffb6d0"/></linearGradient>
+          </defs>
+          <g transform="translate(10,10)">
+            <path d="M40 10c6 0 10 8 8 14 7-3 16 2 18 9 3 7-2 14-9 15 4 7 1 17-7 19-6 1-11-2-13-8-4 4-12 4-16 0-6-6-3-16 4-20-6-1-11-7-9-13 2-7 12-11 18-8-2-6 2-14 8-14z" fill="url(#gB)"/>
+            <circle cx="52" cy="38" r="4" fill="#fff6f8"/>
+          </g>
+        </svg>
+      </div>
+
+      <button id="openBtn" class="open-btn" aria-expanded="false">Buka Suratku</button>
+      <div class="hint">(Light sakura petals will fall when opened)</div>
+    </div>
+  </div>
+
+  <div id="overlay" class="overlay" aria-hidden="true">
+    <div class="letter" role="dialog" aria-modal="true" aria-hidden="true">
+      <h2>Maaf ya, aku...</h2>
+      <div class="body" id="letterBody">
+        <!-- gentle paragraphs (kept EXACTLY as you provided) -->
+        <p><strong>Halloww sayang selamat pagiiiiii.</strong></p>
+        <p>Kalo kamu bukaa inii berati kamu sudah bangun dan mentari mulai terbit, mungkin bagi kamu ini cuma kartu ucapan biasa yaaa</p>
+        <p>Tapiii ini benerann permintaan maaf akuu sayangg buat kamuu soal yang semalemmm, maaf yaa sayangg udah ngerusak mood mu di akhir hari</p>
+        <p>Maaff bangetttt semalem udah bikin kamu ga nyamannn padahal kamu lagi ngerjain tugassss, harusnya aku ngertiii bukan malah isengin kamuu</p>
+        <p>Udahhh yaaa sayangggg jangan cuekinn akuu lagiiiii, kaloo kamu cuekk sama akuu gimanaa duniakuu mau bersinarr orang matahari nya aja gak mau menyinari dunianya</p>
+        <p>Akuu beneran mintaaa maaff bangeettt, samaa mau ngucapin terimakasih jugaaaa</p>
+        <p>Semogaa hari inii, harimu lebihh bahagiaa dari hari kemarin yaaa sayanggg, kalau butuh apa apaa ngomong aja ke aku aku ada disinii nungguin kamuuu, I loveee youu sayangg</p>
+
+        <!-- photo (ke pusat) -->
+        <div class="photo-box">
+            <img src="1.jpg" alt="our-photo">
+        </div>
+      </div>
+      <div class="actions">
+        <button id="closeBtn" class="small">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const openBtn = document.getElementById('openBtn');
+    const overlay = document.getElementById('overlay');
+    const bgm = document.getElementById('bgm');
+    const closeBtn = document.getElementById('closeBtn');
+
+    // create subtle sakura petals (emoji)
+    function spawnPetals(count=10){
+      for(let i=0;i<count;i++){
+        const el = document.createElement('div');
+        el.className='petal';
+        el.textContent = '🌸';
+        el.style.fontSize = (18 + Math.random()*12) + 'px';
+        el.style.left = (10 + Math.random()*80) + '%';
+        el.style.top = (-10 - Math.random()*10) + '%';
+        const dur = 4500 + Math.random()*3000;
+        el.style.animation = `fall ${dur}ms linear forwards`;
+        document.body.appendChild(el);
+        setTimeout(()=> el.remove(), dur+800);
+      }
+    }
+
+    // NEW: lock background scroll when modal open (and restore after close)
+    let _savedScrollY = 0;
+
+    openBtn.addEventListener('click', async ()=>{
+      // save and lock background scroll
+      _savedScrollY = window.scrollY || window.pageYOffset || 0;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${_savedScrollY}px`;
+      document.body.style.left = '0';
+      document.body.style.right = '0';
+      document.body.style.width = '100%';
+
+      overlay.classList.add('show'); overlay.setAttribute('aria-hidden','false');
+      openBtn.setAttribute('aria-expanded','true');
+
+      // ensure letter scroll starts at top
+      const letterEl = document.querySelector('.letter');
+      if(letterEl) letterEl.scrollTop = 0;
+
+      // play bgm on user gesture
+      try{ await bgm.play(); bgm.volume=0; }catch(e){}
+      // fade in music
+      let target=0.14; let v=0; const t=setInterval(()=>{ v=Math.min(target, v+0.02); bgm.volume=v; if(v>=target) clearInterval(t); }, 80);
+      // spawn petals gentle
+      spawnPetals(10);
+    });
+
+    closeBtn.addEventListener('click', ()=>{
+      overlay.classList.remove('show'); overlay.setAttribute('aria-hidden','true');
+      openBtn.setAttribute('aria-expanded','false');
+
+      // unlock background scroll and restore original position
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.width = '';
+      window.scrollTo(0, _savedScrollY || 0);
+
+      // fade out music
+      try{ const cur=bgm.volume; let k=0; const iv=setInterval(()=>{ k++; bgm.volume = Math.max(0, cur*(1-k/12)); if(k>=12){ clearInterval(iv); bgm.pause(); bgm.currentTime=0; } }, 50); }catch(e){}
+    });
+
+    // allow Esc to close
+    document.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && overlay.classList.contains('show')) closeBtn.click(); });
+  </script>
+</body>
+</html>
